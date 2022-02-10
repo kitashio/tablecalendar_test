@@ -6,7 +6,17 @@ final titleProvider = Provider<String> ((ref){
   return 'Calendar Test';
 });
 
-// final calendarProvider = StateProvider<Widget>((ref){
-//
-//
-// });
+final counterProvider = ChangeNotifierProvider((ref) => selectedNotifier());
+
+class selectedNotifier extends ChangeNotifier {
+  DateTime? _selectedDay; //選択した日付
+  DateTime _focusedDay = DateTime.now();
+
+  void selected (selectedDay, focusedDay) {
+  if (!isSameDay(_selectedDay, selectedDay)) {
+    _selectedDay = selectedDay;
+    _focusedDay = focusedDay;
+    }
+  }
+
+}

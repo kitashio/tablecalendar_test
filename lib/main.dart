@@ -27,24 +27,17 @@ class MyHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context,WidgetRef ref) {
 
+    final notifier = ref.read(counterProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(ref.watch(titleProvider)),
       ),
       body: Consumer(
           builder: (context, watch, child) {
+
             DateTime? _selectedDay; //選択した日付
             DateTime _focusedDay = DateTime.now(); //今日の日付
-
-            final selectedProvider = StateProvider ((ref){
-
-                 (selectedDay, focusedDay) async {
-                if (!isSameDay(_selectedDay, selectedDay)) {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                }
-              };
-            });
 
             return TableCalendar(
               firstDay: DateTime.utc(2021, 1, 1), //利用可能な最初の日
@@ -59,9 +52,7 @@ class MyHomePage extends ConsumerWidget {
               selectedDayPredicate: (day) {
                 return isSameDay(_selectedDay, day);
               },
-
-              //
-              onDaySelected: ref.read(selectedProvider.notifier).state,
+              onDaySelected: notifier.selected,
             );
           }
       )
