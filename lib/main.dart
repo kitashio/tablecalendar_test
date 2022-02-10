@@ -33,10 +33,37 @@ class MyHomePage extends ConsumerWidget {
       ),
       body: Consumer(
           builder: (context, watch, child) {
-          return Container(
-            child: ref.watch(calendarProvider),
-          );
-        }
+            DateTime? _selectedDay; //選択した日付
+            DateTime _focusedDay = DateTime.now(); //今日の日付
+
+            final selectedProvider = StateProvider ((ref){
+
+                 (selectedDay, focusedDay) async {
+                if (!isSameDay(_selectedDay, selectedDay)) {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                }
+              };
+            });
+
+            return TableCalendar(
+              firstDay: DateTime.utc(2021, 1, 1), //利用可能な最初の日
+              lastDay: DateTime.utc(2023, 12, 31), //利用可能な最後の日
+              focusedDay: _focusedDay, //今日の日付
+
+              //ヘッダーのフォーマット変更ボタンなくす
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,),
+
+              //日付が選択されたらtrueを返し、dayが選択されたとみなされる
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
+
+              //
+              onDaySelected: ref.read(selectedProvider.notifier).state,
+            );
+          }
       )
     );
   }
